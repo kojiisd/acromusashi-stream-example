@@ -14,12 +14,13 @@ package acromusashi.stream.example.bolt;
 
 import java.util.Map;
 
+import org.apache.storm.task.TopologyContext;
+
 import acromusashi.stream.bolt.AmBaseBolt;
 import acromusashi.stream.entity.StreamMessage;
-import backtype.storm.task.TopologyContext;
 
 /**
- * 受信した共通メッセージをそのまま捨てるBolt<br/>
+ * 受信した共通メッセージをそのまま捨てるBolt<br>
  * 
  * @author kimura
  */

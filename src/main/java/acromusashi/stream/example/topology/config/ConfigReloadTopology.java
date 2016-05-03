@@ -1,9 +1,10 @@
 package acromusashi.stream.example.topology.config;
 
+import org.apache.storm.Config;
+
 import acromusashi.stream.config.StormConfigGenerator;
 import acromusashi.stream.config.StormConfigUtil;
 import acromusashi.stream.topology.BaseTopology;
-import backtype.storm.Config;
 
 /**
  * 
@@ -25,7 +26,7 @@ public class ConfigReloadTopology extends BaseTopology
     }
 
     /**
-     * プログラムエントリポイント<br/>
+     * プログラムエントリポイント<br>
      * <ul>
      * <li>起動引数:arg[0] 設定値を記述したyamlファイルパス</li>
      * <li>起動引数:arg[1] Stormの起動モード(true:LocalMode、false:DistributeMode)</li>

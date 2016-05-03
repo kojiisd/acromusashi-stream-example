@@ -17,12 +17,12 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.RandomStringUtils;
+import org.apache.storm.task.TopologyContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import acromusashi.stream.entity.StreamMessage;
 import acromusashi.stream.spout.AmBaseSpout;
-import backtype.storm.task.TopologyContext;
 
 /**
  * 設定ファイル再読み込みを確認するテスト用Spout

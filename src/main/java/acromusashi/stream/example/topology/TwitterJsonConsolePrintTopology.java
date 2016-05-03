@@ -14,21 +14,17 @@ package acromusashi.stream.example.topology;
 
 import java.util.List;
 
-import acromusashi.stream.bolt.MessageConvertBolt;
-import acromusashi.stream.component.kestrel.spout.KestrelSpout;
-import acromusashi.stream.component.twitter.converter.TwitterJsonConverter;
+import org.apache.storm.Config;
+
 import acromusashi.stream.config.StormConfigGenerator;
 import acromusashi.stream.config.StormConfigUtil;
-import acromusashi.stream.entity.Message;
+import acromusashi.stream.entity.StreamMessage;
 import acromusashi.stream.example.bolt.ConsolePrintBolt;
 import acromusashi.stream.topology.BaseTopology;
-import backtype.storm.Config;
-import backtype.storm.scheme.StringScheme;
-import backtype.storm.spout.SchemeAsMultiScheme;
 
 /**
- * TwitterJSON形式で取得したデータを共通メッセージに変換し、コンソール出力するTopology<br/>
- * Topologyの動作フローは下記の通り。<br/>
+ * TwitterJSON形式で取得したデータを共通メッセージに変換し、コンソール出力するTopology<br>
+ * Topologyの動作フローは下記の通り。<br>
  * <ol>
  * <li>KestrelSpoutにてTwitterJSON形式の文字列を受信する</li>
  * <li>MessageConvertBoltにてTwitterJSON形式の文字列を共通メッセージ形式に変換する</li>
@@ -60,7 +56,7 @@ public class TwitterJsonConsolePrintTopology extends BaseTopology
     }
 
     /**
-     * プログラムエントリポイント<br/>
+     * プログラムエントリポイント<br>
      * <ul>
      * <li>起動引数:arg[0] 設定値を記述したyamlファイルパス</li>
      * <li>起動引数:arg[1] Stormの起動モード(true:LocalMode、false:DistributeMode)</li>
@@ -104,16 +100,16 @@ public class TwitterJsonConsolePrintTopology extends BaseTopology
                 "ConsolePrintBolt.Parallelism", 1);
 
         // Topology Setting
-        // Add Spout(KestrelSpout)
-        KestrelSpout kestrelSpout = new KestrelSpout(kestrelHosts, kestrelQueueName,
-                new SchemeAsMultiScheme(new StringScheme()));
-        getBuilder().setSpout("KestrelSpout", kestrelSpout, kestrelSpoutPara);
+        // Add Spout(KestrelSpout) : Storm1.0.0への更新に伴い、Kestrelは利用しない。
+//        KestrelSpout kestrelSpout = new KestrelSpout(kestrelHosts, kestrelQueueName,
+//                new SchemeAsMultiScheme(new StringScheme()));
+//        getBuilder().setSpout("KestrelSpout", kestrelSpout, kestrelSpoutPara);
 
         // Add Bolt(KestrelSpout -> MessageConvertBolt)
-        MessageConvertBolt convertBolt = new MessageConvertBolt();
-        convertBolt.setConverter(new TwitterJsonConverter());
-        getBuilder().setBolt("ConvertBolt", convertBolt, msgConvertPara).localOrShuffleGrouping(
-                "KestrelSpout");
+        //        MessageConvertBolt convertBolt = new MessageConvertBolt();
+        //        convertBolt.setConverter(new TwitterJsonConverter());
+        //        getBuilder().setBolt("ConvertBolt", convertBolt, msgConvertPara).localOrShuffleGrouping(
+        //                "KestrelSpout");
 
         // Add Bolt(MessageConvertBolt -> ConsolePrintBolt)
         ConsolePrintBolt bolt = new ConsolePrintBolt();
@@ -121,6 +117,6 @@ public class TwitterJsonConsolePrintTopology extends BaseTopology
                 "ConvertBolt");
 
         // Regist Serialize Setting.
-        getConfig().registerSerialization(Message.class);
+        getConfig().registerSerialization(StreamMessage.class);
     }
 }

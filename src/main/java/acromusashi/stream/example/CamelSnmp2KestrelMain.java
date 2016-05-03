@@ -15,10 +15,10 @@ package acromusashi.stream.example;
 import org.apache.camel.spring.Main;
 
 /**
- * SnmpTrapを受信し、KestrelにJSON形式で投入するCamelプロセスを起動するサンプルプログラム<br/>
- * JVMオプション「camel.contexturi」からCamelの設定ファイルパスを取得する。<br/>
- * <br/>
- * 動作フローは下記の通り。<br/>
+ * SnmpTrapを受信し、KestrelにJSON形式で投入するCamelプロセスを起動するサンプルプログラム<br>
+ * JVMオプション「camel.contexturi」からCamelの設定ファイルパスを取得する。<br>
+ * <br>
+ * 動作フローは下記の通り。<br>
  * 
  * <ol>
  * <li>&lt;from uri="snmp:～&gt;に記述したアドレスでSNMP4JのSNMPTrapを受信する</li>

@@ -12,19 +12,20 @@
 */
 package acromusashi.stream.example.topology;
 
+import org.apache.storm.Config;
+
 import acromusashi.stream.bolt.jdbc.CamelJdbcStoreBolt;
 import acromusashi.stream.component.snmp.converter.SnmpConverter;
 import acromusashi.stream.config.StormConfigGenerator;
 import acromusashi.stream.config.StormConfigUtil;
-import acromusashi.stream.entity.Message;
+import acromusashi.stream.entity.StreamMessage;
 import acromusashi.stream.example.spout.PeriodicalSnmpGenSpout;
 import acromusashi.stream.topology.BaseTopology;
-import backtype.storm.Config;
 
 /**
- * StormTopologyから外部には接続せず、Snmp型共通メッセージをH2データベースに保存するTopologyを起動する。<br/>
- * <br/>
- * Topologyの動作フローは下記の通り。<br/>
+ * StormTopologyから外部には接続せず、Snmp型共通メッセージをH2データベースに保存するTopologyを起動する。<br>
+ * <br>
+ * Topologyの動作フローは下記の通り。<br>
  * <ol>
  * <li>PeriodicalSnmpGenSpoutにてSNMP形式の共通メッセージを生成する</li>
  * <li>CamelJdbcStoreBoltにて設定項目[dataSource]に設定したDataSourceに対してデータを投入する</li>
@@ -52,7 +53,7 @@ public class LocalJdbcStoreTopology extends BaseTopology
     }
 
     /**
-     * プログラムエントリポイント<br/>
+     * プログラムエントリポイント<br>
      * <ul>
      * <li>起動引数:arg[0] 設定値を記述したyamlファイルパス</li>
      * <li>起動引数:arg[1] Stormの起動モード(true:LocalMode、false:DistributeMode)</li>
@@ -65,7 +66,8 @@ public class LocalJdbcStoreTopology extends BaseTopology
         // プログラム引数の不足をチェック
         if (args.length < 2)
         {
-            System.out.println("Usage: java LocalJdbcStoreTopology ConfigPath isExecuteLocal(true|false)");
+            System.out.println(
+                    "Usage: java LocalJdbcStoreTopology ConfigPath isExecuteLocal(true|false)");
             return;
         }
 
@@ -104,6 +106,6 @@ public class LocalJdbcStoreTopology extends BaseTopology
                 "SnmpGenSpout");
 
         // Regist Serialize Setting.
-        getConfig().registerSerialization(Message.class);
+        getConfig().registerSerialization(StreamMessage.class);
     }
 }

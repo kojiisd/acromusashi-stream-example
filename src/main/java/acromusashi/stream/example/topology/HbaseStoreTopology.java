@@ -16,21 +16,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.storm.Config;
 
 import acromusashi.stream.bolt.hbase.CamelHbaseStoreBolt;
 import acromusashi.stream.bolt.hbase.CellDefine;
 import acromusashi.stream.component.snmp.converter.SnmpConverter;
 import acromusashi.stream.config.StormConfigGenerator;
 import acromusashi.stream.config.StormConfigUtil;
-import acromusashi.stream.entity.Message;
+import acromusashi.stream.entity.StreamMessage;
 import acromusashi.stream.example.spout.PeriodicalMessageGenSpout;
 import acromusashi.stream.topology.BaseTopology;
-import backtype.storm.Config;
 
 /**
  * HBase DataStore用のTopologyを起動する。
- * <br/>
- * Topologyの動作フローは下記の通り。<br/>
+ * <br>
+ * Topologyの動作フローは下記の通り。<br>
  * <ol>
  * <li>PeriodicalMessageGenSpoutにてメッセージを生成する</li>
  * <li>CamelHbaseStoreBoltにて[hbase-site.xml]に指定したHBaseに対してデータを投入する</li>
@@ -59,7 +59,7 @@ public class HbaseStoreTopology extends BaseTopology
     }
 
     /**
-     * プログラムエントリポイント<br/>
+     * プログラムエントリポイント<br>
      * <ul>
      * <li>起動引数:arg[0] 設定値を記述したyamlファイルパス</li>
      * <li>起動引数:arg[1] Stormの起動モード(true:LocalMode、false:DistributeMode)</li>
@@ -72,7 +72,8 @@ public class HbaseStoreTopology extends BaseTopology
         // プログラム引数の不足をチェック
         if (args.length < 2)
         {
-            System.out.println("Usage: java HbaseStoreTopology ConfigPath isExecuteLocal(true|false)");
+            System.out.println(
+                    "Usage: java HbaseStoreTopology ConfigPath isExecuteLocal(true|false)");
             return;
         }
 
@@ -110,8 +111,8 @@ public class HbaseStoreTopology extends BaseTopology
         CamelHbaseStoreBolt hbaseStoreBolt = new CamelHbaseStoreBolt();
         hbaseStoreBolt.setConverter(new SnmpConverter());
         hbaseStoreBolt.setApplicationContextUri(contextUri);
-        getBuilder().setBolt("CamelHBaseBolt", hbaseStoreBolt, hbaseBoltPara).localOrShuffleGrouping(
-                "MessageGenSpout");
+        getBuilder().setBolt("CamelHBaseBolt", hbaseStoreBolt,
+                hbaseBoltPara).localOrShuffleGrouping("MessageGenSpout");
 
         List<CellDefine> cellList = new ArrayList<CellDefine>();
 
@@ -124,6 +125,6 @@ public class HbaseStoreTopology extends BaseTopology
         hbaseStoreBolt.setCellDefineList(cellList);
 
         // Regist Serialize Setting.
-        getConfig().registerSerialization(Message.class);
+        getConfig().registerSerialization(StreamMessage.class);
     }
 }

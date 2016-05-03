@@ -12,12 +12,17 @@
 */
 package acromusashi.stream.example.ml.topology;
 
-import storm.kafka.StringScheme;
-import storm.kafka.ZkHosts;
-import storm.kafka.trident.OpaqueTridentKafkaSpout;
-import storm.kafka.trident.TridentKafkaConfig;
-import storm.trident.TridentTopology;
-import storm.trident.operation.impl.CombinerAggregatorCombineImpl;
+import org.apache.storm.Config;
+import org.apache.storm.generated.StormTopology;
+import org.apache.storm.kafka.StringScheme;
+import org.apache.storm.kafka.ZkHosts;
+import org.apache.storm.kafka.trident.OpaqueTridentKafkaSpout;
+import org.apache.storm.kafka.trident.TridentKafkaConfig;
+import org.apache.storm.spout.SchemeAsMultiScheme;
+import org.apache.storm.trident.TridentTopology;
+import org.apache.storm.trident.operation.impl.CombinerAggregatorCombineImpl;
+import org.apache.storm.tuple.Fields;
+
 import acromusashi.stream.config.StormConfigGenerator;
 import acromusashi.stream.config.StormConfigUtil;
 import acromusashi.stream.example.ml.trident.ResultPrintFunction;
@@ -26,10 +31,6 @@ import acromusashi.stream.ml.loganalyze.ApacheLogAggregator;
 import acromusashi.stream.ml.loganalyze.ApacheLogSplitFunction;
 import acromusashi.stream.ml.loganalyze.ChangeFindFunction;
 import acromusashi.stream.topology.BaseTridentTopology;
-import backtype.storm.Config;
-import backtype.storm.generated.StormTopology;
-import backtype.storm.spout.SchemeAsMultiScheme;
-import backtype.storm.tuple.Fields;
 
 /**
  * Apacheのログ中のレスポンスタイムに対してChangeFindアルゴリズムを適用するTridentTopology<br>
@@ -63,7 +64,7 @@ public class ChangeFindTopology extends BaseTridentTopology
     }
 
     /**
-     * プログラムエントリポイント<br/>
+     * プログラムエントリポイント<br>
      * <ul>
      * <li>起動引数:arg[0] 設定値を記述したyamlファイルパス</li>
      * <li>起動引数:arg[1] Stormの起動モード(true:LocalMode、false:DistributeMode)</li>

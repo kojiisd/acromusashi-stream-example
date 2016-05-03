@@ -16,12 +16,13 @@ import java.text.MessageFormat;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.apache.storm.topology.OutputFieldsDeclarer;
+import org.apache.storm.tuple.Tuple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import acromusashi.stream.bolt.BaseConfigurationBolt;
-import backtype.storm.topology.OutputFieldsDeclarer;
-import backtype.storm.tuple.Tuple;
+import acromusashi.stream.bolt.AmConfigurationBolt;
+import acromusashi.stream.entity.StreamMessage;
 
 /**
  * 受信した単語の出現回数をカウントするBolt
@@ -33,7 +34,7 @@ import backtype.storm.tuple.Tuple;
  *
  * @author kimura
  */
-public class WordCountBolt extends BaseConfigurationBolt
+public class WordCountBolt extends AmConfigurationBolt
 {
     /** serialVersionUID */
     private static final long      serialVersionUID = 9080948772140456741L;
@@ -104,5 +105,12 @@ public class WordCountBolt extends BaseConfigurationBolt
     public void setInterval(long interval)
     {
         this.interval = interval;
+    }
+
+    @Override
+    public void onMessage(StreamMessage message)
+    {
+        // TODO Auto-generated method stub
+        
     }
 }

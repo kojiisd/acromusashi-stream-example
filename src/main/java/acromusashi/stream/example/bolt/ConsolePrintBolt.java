@@ -14,12 +14,13 @@ package acromusashi.stream.example.bolt;
 
 import java.util.Map;
 
+import org.apache.storm.task.TopologyContext;
+
 import acromusashi.stream.bolt.AmBaseBolt;
 import acromusashi.stream.entity.StreamMessage;
-import backtype.storm.task.TopologyContext;
 
 /**
- * 受信した共通メッセージの文字列表現をコンソールに出力するBolt<br/>
+ * 受信した共通メッセージの文字列表現をコンソールに出力するBolt<br>
  * ClusterModeでコンソールに出力した場合、Worker.logに出力されるため、内容はログファイルを確認すること。
  * 
  * @author kimura

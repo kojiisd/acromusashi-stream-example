@@ -15,9 +15,9 @@ package acromusashi.stream.example;
 import org.apache.camel.spring.Main;
 
 /**
- * JSON　HTTP Requestを受信し、KestrelにJSON形式で投入するCamelプロセスを起動するサンプルプログラム<br/>
- * JVMオプション「camel.contexturi」からCamelの設定ファイルパスを取得する。<br/>
- * <br/>
+ * JSON　HTTP Requestを受信し、KestrelにJSON形式で投入するCamelプロセスを起動するサンプルプログラム<br>
+ * JVMオプション「camel.contexturi」からCamelの設定ファイルパスを取得する。<br>
+ * <br>
  * 動作フローは下記の通り。
  * 
  * <ol>

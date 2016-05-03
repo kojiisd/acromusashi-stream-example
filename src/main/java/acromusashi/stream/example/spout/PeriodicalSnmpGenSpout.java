@@ -17,28 +17,29 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.storm.topology.OutputFieldsDeclarer;
+import org.apache.storm.tuple.Fields;
+import org.apache.storm.tuple.Values;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import acromusashi.stream.entity.Header;
-import acromusashi.stream.entity.Message;
-import acromusashi.stream.spout.BaseConfigurationSpout;
-import backtype.storm.topology.OutputFieldsDeclarer;
-import backtype.storm.tuple.Fields;
-import backtype.storm.tuple.Values;
+import acromusashi.stream.entity.StreamMessage;
+import acromusashi.stream.entity.StreamMessageHeader;
+import acromusashi.stream.spout.AmConfigurationSpout;
 
 /**
  * 一定間隔ごとにSNMP形式の共通メッセージをBoltに送信するSpout。
  * 
  * @author tsukano
  */
-public class PeriodicalSnmpGenSpout extends BaseConfigurationSpout
+public class PeriodicalSnmpGenSpout extends AmConfigurationSpout
 {
     /** serialVersionUID */
     private static final long   serialVersionUID = -237111294339742815L;
 
     /** logger */
-    private static final Logger logger           = LoggerFactory.getLogger(PeriodicalSnmpGenSpout.class);
+    private static final Logger logger           = LoggerFactory.getLogger(
+            PeriodicalSnmpGenSpout.class);
 
     /** 送信カウンタ */
     private int                 counter          = 0;
@@ -56,17 +57,18 @@ public class PeriodicalSnmpGenSpout extends BaseConfigurationSpout
     public void nextTuple()
     {
         this.counter++;
-        Header header = new Header();
+        StreamMessageHeader header = new StreamMessageHeader();
         header.setMessageId(UUID.randomUUID().toString());
         header.setTimestamp(System.currentTimeMillis());
         header.setSource("192.168.0.1");
         header.setType("snmp");
         header.addAdditionalHeader("SNMPVersion", "v2c");
-        Message message = new Message();
+        StreamMessage message = new StreamMessage();
         message.setHeader(header);
 
         List<Object> list = new ArrayList<Object>();
-        list.add("{\"sender\":\"localhost\",\"type\":\"snmp\",\"timestamp\":\"1345020868298\",\"version\":\"1.0\"}");
+        list.add(
+                "{\"sender\":\"localhost\",\"type\":\"snmp\",\"timestamp\":\"1345020868298\",\"version\":\"1.0\"}");
         list.add(this.counter);
         message.setBody(list);
 

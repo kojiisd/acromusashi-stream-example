@@ -3,12 +3,12 @@ package acromusashi.stream.example.topology.config;
 import java.text.MessageFormat;
 import java.util.Map;
 
+import org.apache.storm.task.TopologyContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import acromusashi.stream.bolt.AmBaseBolt;
 import acromusashi.stream.entity.StreamMessage;
-import backtype.storm.task.TopologyContext;
 
 /**
  * 設定ファイル再読み込みを確認するテスト用Bolt

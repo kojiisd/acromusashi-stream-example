@@ -14,19 +14,17 @@ package acromusashi.stream.example.topology;
 
 import java.util.List;
 
-import acromusashi.stream.component.kestrel.spout.KestrelSpout;
+import org.apache.storm.Config;
+
 import acromusashi.stream.config.StormConfigGenerator;
 import acromusashi.stream.config.StormConfigUtil;
-import acromusashi.stream.entity.Message;
+import acromusashi.stream.entity.StreamMessage;
 import acromusashi.stream.example.bolt.ConsolePrintBolt;
 import acromusashi.stream.topology.BaseTopology;
-import backtype.storm.Config;
-import backtype.storm.scheme.StringScheme;
-import backtype.storm.spout.SchemeAsMultiScheme;
 
 /**
- * StormTopologyから外部には接続せず、共通メッセージをコンソール出力するTopologyを起動する。<br/>
- * Topologyの動作フローは下記の通り。<br/>
+ * StormTopologyから外部には接続せず、共通メッセージをコンソール出力するTopologyを起動する。<br>
+ * Topologyの動作フローは下記の通り。<br>
  * <ol>
  * <li>PeriodicalMessageGenSpoutにて共通メッセージを生成する</li>
  * <li>CamelHbaseStoreBoltにて共通メッセージをコンソールに出力する</li>
@@ -53,7 +51,7 @@ public class LocalConsolePrintTopology extends BaseTopology
     }
 
     /**
-     * プログラムエントリポイント<br/>
+     * プログラムエントリポイント<br>
      * <ul>
      * <li>起動引数:arg[0] 設定値を記述したyamlファイルパス</li>
      * <li>起動引数:arg[1] Stormの起動モード(true:LocalMode、false:DistributeMode)</li>
@@ -95,10 +93,10 @@ public class LocalConsolePrintTopology extends BaseTopology
                 "ConsolePrintBolt.Parallelism", 2);
 
         // Topology Setting
-        // Add Spout(KestrelSpout)
-        KestrelSpout kestrelSpout = new KestrelSpout(kestrelHosts, kestrelQueueName,
-                new SchemeAsMultiScheme(new StringScheme()));
-        getBuilder().setSpout("KestrelSpout", kestrelSpout, kestrelSpoutPara);
+        // Add Spout(KestrelSpout) : KestrelはStorm1.0.0の更新に伴い使わないものとする。
+//        KestrelSpout kestrelSpout = new KestrelSpout(kestrelHosts, kestrelQueueName,
+//                new SchemeAsMultiScheme(new StringScheme()));
+//        getBuilder().setSpout("KestrelSpout", kestrelSpout, kestrelSpoutPara);
 
         // Add Bolt(KestrelSpout -> ConsolePrintBolt)
         ConsolePrintBolt printBolt = new ConsolePrintBolt();
@@ -106,6 +104,6 @@ public class LocalConsolePrintTopology extends BaseTopology
                 "KestrelSpout");
 
         // Regist Serialize Setting.
-        getConfig().registerSerialization(Message.class);
+        getConfig().registerSerialization(StreamMessage.class);
     }
 }

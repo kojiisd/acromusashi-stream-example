@@ -4,7 +4,7 @@
   <name>acromusashi-stream-example</name>
   <groupId>jp.co.acroquest.acromusashi</groupId>
   <artifactId>acromusashi-stream-example</artifactId>
-  <version>0.5.2</version>
+  <version>0.5.3</version>
   <packaging>jar</packaging>
   <description>Realtime Big Data Platform</description>
   <url>https://github.com/acromusashi</url>
@@ -71,10 +71,10 @@
 
   <!-- プロジェクトプロパティ -->
   <properties>
-    <jdk.version>1.7</jdk.version>
+    <jdk.version>1.8</jdk.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <site.encoding>UTF-8</site.encoding>
-    <storm.version>0.9.3</storm.version>
+    <storm.version>1.0.0</storm.version>
     <camel.version>2.13.3</camel.version>
     <jacoco.include.package>acromusashi.stream.example.*</jacoco.include.package>
   </properties>
@@ -134,12 +134,12 @@
     <dependency>
       <groupId>jp.co.acroquest.acromusashi</groupId>
       <artifactId>acromusashi-stream</artifactId>
-      <version>0.6.1</version>
+      <version>0.6.8</version>
     </dependency>
     <dependency>
       <groupId>jp.co.acroquest.acromusashi</groupId>
       <artifactId>acromusashi-stream-ml</artifactId>
-      <version>0.2.3</version>
+      <version>0.2.5</version>
     </dependency>
 
     <!-- Storm -->
@@ -274,6 +274,11 @@
       <artifactId>jackson-databind</artifactId>
       <version>2.2.3</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>4.5.2</version>
+    </dependency>
 
     <!-- Redis -->
     <dependency>
@@ -284,32 +289,17 @@
 
     <!-- Storm-Kafka -->
     <dependency>
-      <groupId>org.clojars.brenden</groupId>
-      <artifactId>storm-kafka-0.8-plus</artifactId>
-      <version>0.2.10-SNAPSHOT</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.scala-lang</groupId>
-          <artifactId>scala-library</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.kafka</groupId>
-      <artifactId>kafka_2.9.2</artifactId>
-      <version>0.8.1</version>
-      <exclusions>
-        <exclusion>
-          <groupId>log4j</groupId>
-          <artifactId>log4j</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>org.scala-lang</groupId>
       <artifactId>scala-compiler</artifactId>
       <version>2.9.2</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.storm</groupId>
+      <artifactId>storm-kafka</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+
+    
 
     <dependency>
       <groupId>endosnipe</groupId>

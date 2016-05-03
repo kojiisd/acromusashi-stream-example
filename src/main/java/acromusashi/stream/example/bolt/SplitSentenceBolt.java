@@ -14,11 +14,13 @@ package acromusashi.stream.example.bolt;
 
 import org.apache.commons.lang.StringUtils;
 
-import acromusashi.stream.bolt.BaseConfigurationBolt;
-import backtype.storm.topology.OutputFieldsDeclarer;
-import backtype.storm.tuple.Fields;
-import backtype.storm.tuple.Tuple;
-import backtype.storm.tuple.Values;
+import acromusashi.stream.bolt.AmConfigurationBolt;
+import acromusashi.stream.entity.StreamMessage;
+
+import org.apache.storm.topology.OutputFieldsDeclarer;
+import org.apache.storm.tuple.Fields;
+import org.apache.storm.tuple.Tuple;
+import org.apache.storm.tuple.Values;
 
 /**
 * 受信した英語の文章を単語単位に分割して次のBoltに送信するBolt
@@ -30,7 +32,7 @@ import backtype.storm.tuple.Values;
 *
 * @author kimura
 */
-public class SplitSentenceBolt extends BaseConfigurationBolt
+public class SplitSentenceBolt extends AmConfigurationBolt
 {
     /** serialVersionUID */
     private static final long serialVersionUID = -445961598496006743L;
@@ -65,5 +67,12 @@ public class SplitSentenceBolt extends BaseConfigurationBolt
     public void declareOutputFields(OutputFieldsDeclarer declarer)
     {
         declarer.declare(new Fields("word"));
+    }
+
+    @Override
+    public void onMessage(StreamMessage message)
+    {
+        // TODO Auto-generated method stub
+        
     }
 }

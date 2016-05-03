@@ -17,28 +17,29 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.storm.topology.OutputFieldsDeclarer;
+import org.apache.storm.tuple.Fields;
+import org.apache.storm.tuple.Values;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import acromusashi.stream.entity.Header;
-import acromusashi.stream.entity.Message;
-import acromusashi.stream.spout.BaseConfigurationSpout;
-import backtype.storm.topology.OutputFieldsDeclarer;
-import backtype.storm.tuple.Fields;
-import backtype.storm.tuple.Values;
+import acromusashi.stream.entity.StreamMessage;
+import acromusashi.stream.entity.StreamMessageHeader;
+import acromusashi.stream.spout.AmConfigurationSpout;
 
 /**
  * 一定間隔ごとに共通メッセージをBoltに送信するSpout。
  * 
  * @author tsukano
  */
-public class PeriodicalMessageGenSpout extends BaseConfigurationSpout
+public class PeriodicalMessageGenSpout extends AmConfigurationSpout
 {
     /** serialVersionUID */
     private static final long   serialVersionUID = -237111294339742815L;
 
     /** logger */
-    private static final Logger logger           = LoggerFactory.getLogger(PeriodicalMessageGenSpout.class);
+    private static final Logger logger           = LoggerFactory.getLogger(
+            PeriodicalMessageGenSpout.class);
 
     /** 送信カウンタ */
     private int                 counter          = 0;
@@ -56,12 +57,12 @@ public class PeriodicalMessageGenSpout extends BaseConfigurationSpout
     public void nextTuple()
     {
         this.counter++;
-        Header header = new Header();
+        StreamMessageHeader header = new StreamMessageHeader();
         header.setMessageId(UUID.randomUUID().toString());
         header.setTimestamp(System.currentTimeMillis());
         header.setSource("192.168.0.1");
         header.setType("message");
-        Message message = new Message();
+        StreamMessage message = new StreamMessage();
         message.setHeader(header);
 
         List<Object> list = new ArrayList<Object>();

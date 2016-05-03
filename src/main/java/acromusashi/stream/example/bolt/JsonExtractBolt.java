@@ -16,18 +16,18 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Map;
 
+import org.apache.storm.task.TopologyContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import acromusashi.stream.bolt.AmBaseBolt;
-import acromusashi.stream.entity.StreamMessage;
-import backtype.storm.task.TopologyContext;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import acromusashi.stream.bolt.AmBaseBolt;
+import acromusashi.stream.entity.StreamMessage;
+
 /**
- * 共通メッセージ中のJSONから特定要素を抽出するBolt<br/>
+ * 共通メッセージ中のJSONから特定要素を抽出するBolt<br>
  *
  * @author kimura
  */
@@ -37,7 +37,8 @@ public class JsonExtractBolt extends AmBaseBolt
     private static final long        serialVersionUID = 4002032169715662295L;
 
     /** logger */
-    private static final Logger      logger           = LoggerFactory.getLogger(JsonExtractBolt.class);
+    private static final Logger      logger           = LoggerFactory.getLogger(
+            JsonExtractBolt.class);
 
     /** 変換対象のエンティティクラス */
     protected String                 targetKey;

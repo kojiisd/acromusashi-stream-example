@@ -12,6 +12,9 @@
 */
 package acromusashi.stream.example.topology;
 
+import org.apache.storm.Config;
+import org.apache.storm.tuple.Fields;
+
 import acromusashi.stream.config.StormConfigGenerator;
 import acromusashi.stream.config.StormConfigUtil;
 import acromusashi.stream.example.bolt.JsonExtractBolt;
@@ -19,8 +22,6 @@ import acromusashi.stream.example.bolt.SplitSentenceBolt;
 import acromusashi.stream.example.bolt.WordCountBolt;
 import acromusashi.stream.example.spout.HttpGetSpout;
 import acromusashi.stream.topology.BaseTopology;
-import backtype.storm.Config;
-import backtype.storm.tuple.Fields;
 
 /**
  * HTTPリクエストを送信して取得したJSONメッセージを取得し、ワードカウントを行うTopology。<br>
@@ -68,7 +69,7 @@ public class HttpWordCountTopology extends BaseTopology
     }
 
     /**
-     * プログラムエントリポイント<br/>
+     * プログラムエントリポイント<br>
      * <ul>
      * <li>起動引数:arg[0] 設定値を記述したyamlファイルパス</li>
      * <li>起動引数:arg[1] Stormの起動モード(true:LocalMode、false:DistributeMode)</li>

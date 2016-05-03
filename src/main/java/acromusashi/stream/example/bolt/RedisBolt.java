@@ -14,19 +14,20 @@ package acromusashi.stream.example.bolt;
 
 import java.util.Map;
 
+import org.apache.storm.task.OutputCollector;
+import org.apache.storm.task.TopologyContext;
+
+import acromusashi.stream.bolt.AmBaseBolt;
+import acromusashi.stream.entity.StreamMessage;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
-import acromusashi.stream.bolt.MessageBolt;
-import acromusashi.stream.entity.Message;
-import backtype.storm.task.OutputCollector;
-import backtype.storm.task.TopologyContext;
 
 /**
- * 受信した共通メッセージをRedisに格納するBolt<br/>
+ * 受信した共通メッセージをRedisに格納するBolt<br>
  * 
  * @author kimura
  */
-public class RedisBolt extends MessageBolt
+public class RedisBolt extends AmBaseBolt
 {
     /** serialVersionUID */
     private static final long   serialVersionUID = 7742873990972648063L;
@@ -65,7 +66,7 @@ public class RedisBolt extends MessageBolt
      * {@inheritDoc}
      */
     @Override
-    public void onMessage(Message message) throws Exception
+    public void onMessage(StreamMessage message)
     {
         if (this.jedisClient == null)
         {
@@ -73,5 +74,19 @@ public class RedisBolt extends MessageBolt
         }
 
         this.jedisClient.set(message.getHeader().getMessageId(), message.getBody().toString());
+    }
+
+    @Override
+    public void onPrepare(Map stormConf, TopologyContext context)
+    {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void onExecute(StreamMessage input)
+    {
+        // TODO Auto-generated method stub
+        
     }
 }

@@ -22,16 +22,17 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
-import org.apache.thrift7.TException;
-
-import acromusashi.stream.config.StormConfigGenerator;
-import acromusashi.stream.config.StormConfigUtil;
-import backtype.storm.Config;
-import backtype.storm.generated.DRPCExecutionException;
-import backtype.storm.utils.DRPCClient;
+import org.apache.storm.Config;
+import org.apache.storm.generated.DRPCExecutionException;
+import org.apache.storm.thrift.TException;
+import org.apache.storm.utils.DRPCClient;
+import org.apache.storm.utils.Utils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import acromusashi.stream.config.StormConfigGenerator;
+import acromusashi.stream.config.StormConfigUtil;
 
 /**
  * LofTopologyに対してデータの投入を行い、結果を受け取るDRPCクライアント
@@ -50,9 +51,9 @@ public class LofDrpcClient
     {}
 
     /**
-     * プログラムエントリポイント<br/>
-     * <br/>
-     * 下記の引数/オプションを使用する。<br/>
+     * プログラムエントリポイント<br>
+     * <br>
+     * 下記の引数/オプションを使用する。<br>
      * <ul>
      * <li>-c LOFTopology用設定ファイルパス(必須入力）</li>
      * <li>-d LOF Data(必須入力、学習用データと同形式で投入)</li>
@@ -124,7 +125,7 @@ public class LofDrpcClient
         {
             lofScore = sendRequest(drpcHost, drpcPort, drpcFunction, lofData);
         }
-        catch (TException | DRPCExecutionException | IOException ex)
+        catch (TException | IOException ex)
         {
             // 送信失敗した場合は終了する
             ex.printStackTrace();
@@ -149,7 +150,7 @@ public class LofDrpcClient
     public double sendRequest(String drpcHost, int drpcPort, String drpcFunction, String lofData)
             throws TException, DRPCExecutionException, IOException
     {
-        DRPCClient client = new DRPCClient(drpcHost, drpcPort);
+        DRPCClient client = new DRPCClient(Utils.readStormConfig(), drpcHost, drpcPort);
         String drpcResult = client.execute(drpcFunction, lofData);
 
         // 以下のような形式で返るため、パースを行う。

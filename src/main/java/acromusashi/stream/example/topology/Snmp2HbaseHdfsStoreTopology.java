@@ -16,25 +16,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.storm.Config;
 
-import acromusashi.stream.bolt.MessageConvertBolt;
 import acromusashi.stream.bolt.hbase.CamelHbaseStoreBolt;
 import acromusashi.stream.bolt.hbase.CellDefine;
 import acromusashi.stream.bolt.hdfs.HdfsStoreBolt;
-import acromusashi.stream.component.kestrel.spout.KestrelSpout;
 import acromusashi.stream.component.snmp.converter.SnmpConverter;
 import acromusashi.stream.config.StormConfigGenerator;
 import acromusashi.stream.config.StormConfigUtil;
-import acromusashi.stream.entity.Message;
+import acromusashi.stream.entity.StreamMessage;
 import acromusashi.stream.topology.BaseTopology;
-import backtype.storm.Config;
-import backtype.storm.scheme.StringScheme;
-import backtype.storm.spout.SchemeAsMultiScheme;
 
 /**
  * HBase/HDFS DataStore用のTopologyを起動する。
- * <br/>
- * Topologyの動作フローは下記の通り。<br/>
+ * <br>
+ * Topologyの動作フローは下記の通り。<br>
  * <ol>
  * <li>KestrelSpoutにてSNMPメッセージをJSON形式で受信する</li>
  * <li>MessageConvertBoltにてJSON形式のTrapを共通メッセージ形式に変換する</li>
@@ -73,7 +69,7 @@ public class Snmp2HbaseHdfsStoreTopology extends BaseTopology
     }
 
     /**
-     * プログラムエントリポイント<br/>
+     * プログラムエントリポイント<br>
      * <ul>
      * <li>起動引数:arg[0] 設定値を記述したyamlファイルパス</li>
      * <li>起動引数:arg[1] Stormの起動モード(true:LocalMode、false:DistributeMode)</li>
@@ -121,16 +117,16 @@ public class Snmp2HbaseHdfsStoreTopology extends BaseTopology
         int hdfsBoltPara = StormConfigUtil.getIntValue(getConfig(), "HdfsStoreBolt.Parallelism", 1);
 
         // Topology Setting
-        // Add Spout(KestrelSpout)
-        KestrelSpout kestrelSpout = new KestrelSpout(kestrelHosts, kestrelQueueName,
-                new SchemeAsMultiScheme(new StringScheme()));
-        getBuilder().setSpout("KestrelSpout", kestrelSpout, kestrelSpoutPara);
+        // Add Spout(KestrelSpout) : Storm1.0.0への更新に伴いKestrelは利用しないこととした。
+//        KestrelSpout kestrelSpout = new KestrelSpout(kestrelHosts, kestrelQueueName,
+//                new SchemeAsMultiScheme(new StringScheme()));
+//        getBuilder().setSpout("KestrelSpout", kestrelSpout, kestrelSpoutPara);
 
         // Add Bolt(KestrelSpout -> MessageConvertBolt)
-        MessageConvertBolt convertBolt = new MessageConvertBolt();
-        convertBolt.setConverter(new SnmpConverter());
-        getBuilder().setBolt("ConvertBolt", convertBolt, msgConvertPara).shuffleGrouping(
-                "KestrelSpout");
+        //        MessageConvertBolt convertBolt = new MessageConvertBolt();
+        //        convertBolt.setConverter(new SnmpConverter());
+        //        getBuilder().setBolt("ConvertBolt", convertBolt, msgConvertPara).shuffleGrouping(
+        //                "KestrelSpout");
 
         // Add Bolt(MessageConvertBolt -> CamelHbaseStoreBolt)
         CamelHbaseStoreBolt camelHBaseBolt = new CamelHbaseStoreBolt();
@@ -155,6 +151,6 @@ public class Snmp2HbaseHdfsStoreTopology extends BaseTopology
         getBuilder().setBolt("HdfsStoreBolt", bolt, hdfsBoltPara).shuffleGrouping("ConvertBolt");
 
         // Regist Serialize Setting.
-        getConfig().registerSerialization(Message.class);
+        getConfig().registerSerialization(StreamMessage.class);
     }
 }

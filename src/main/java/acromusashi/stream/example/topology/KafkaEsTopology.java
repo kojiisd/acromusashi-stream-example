@@ -12,18 +12,19 @@
 */
 package acromusashi.stream.example.topology;
 
-import storm.kafka.KafkaSpout;
-import storm.kafka.SpoutConfig;
-import storm.kafka.StringScheme;
-import storm.kafka.ZkHosts;
+import org.apache.storm.Config;
+import org.apache.storm.kafka.KafkaSpout;
+import org.apache.storm.kafka.SpoutConfig;
+import org.apache.storm.kafka.StringScheme;
+import org.apache.storm.kafka.ZkHosts;
+import org.apache.storm.spout.SchemeAsMultiScheme;
+
 import acromusashi.stream.component.elasticsearch.bolt.ElasticSearchBolt;
 import acromusashi.stream.component.elasticsearch.bolt.EsTupleConverter;
 import acromusashi.stream.component.elasticsearch.bolt.JsonConverter;
 import acromusashi.stream.config.StormConfigGenerator;
 import acromusashi.stream.config.StormConfigUtil;
 import acromusashi.stream.topology.BaseTopology;
-import backtype.storm.Config;
-import backtype.storm.spout.SchemeAsMultiScheme;
 
 /**
  * KafkaからJSON文字列を取得し、ElasticSearchに投入するTopology
@@ -44,7 +45,7 @@ public class KafkaEsTopology extends BaseTopology
     }
 
     /**
-     * プログラムエントリポイント<br/>
+     * プログラムエントリポイント<br>
      * <ul>
      * <li>起動引数:arg[0] 設定値を記述したyamlファイルパス</li>
      * <li>起動引数:arg[1] Stormの起動モード(true:LocalMode、false:DistributeMode)</li>
@@ -100,7 +101,8 @@ public class KafkaEsTopology extends BaseTopology
         // Topology Setting
         // Add Spout(KafkaSpout)
         ZkHosts zkHosts = new ZkHosts(kafkaZkServerStr, kafkaZkRoot);
-        SpoutConfig spoutConfig = new SpoutConfig(zkHosts, kafkaTopic, kafkaZkRoot, kafkaConsumerId);
+        SpoutConfig spoutConfig = new SpoutConfig(zkHosts, kafkaTopic, kafkaZkRoot,
+                kafkaConsumerId);
         spoutConfig.zkRoot = kafkaZkRoot;
         SchemeAsMultiScheme multiScheme = new SchemeAsMultiScheme(new StringScheme());
         spoutConfig.scheme = multiScheme;

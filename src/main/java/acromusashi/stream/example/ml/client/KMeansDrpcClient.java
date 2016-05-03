@@ -22,16 +22,17 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
-import org.apache.thrift7.TException;
-
-import acromusashi.stream.config.StormConfigGenerator;
-import acromusashi.stream.config.StormConfigUtil;
-import backtype.storm.Config;
-import backtype.storm.generated.DRPCExecutionException;
-import backtype.storm.utils.DRPCClient;
+import org.apache.storm.Config;
+import org.apache.storm.generated.AuthorizationException;
+import org.apache.storm.thrift.TException;
+import org.apache.storm.utils.DRPCClient;
+import org.apache.storm.utils.Utils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import acromusashi.stream.config.StormConfigGenerator;
+import acromusashi.stream.config.StormConfigUtil;
 
 /**
  * KMeansTopologyに対してデータの投入を行い、結果を受け取るDRPCクライアント
@@ -50,9 +51,9 @@ public class KMeansDrpcClient
     {}
 
     /**
-     * プログラムエントリポイント<br/>
-     * <br/>
-     * 下記の引数/オプションを使用する。<br/>
+     * プログラムエントリポイント<br>
+     * <br>
+     * 下記の引数/オプションを使用する。<br>
      * <ul>
      * <li>-c KMeansTopology用設定ファイルパス(必須入力）</li>
      * <li>-d KMeans Data(必須入力、学習用データと同形式で投入)</li>
@@ -60,8 +61,10 @@ public class KMeansDrpcClient
      * </ul>
      * 
      * @param args 起動引数
+     * @throws TException DRPCリクエスト失敗時
+     * @throws AuthorizationException 認証失敗時
      */
-    public static void main(String... args)
+    public static void main(String... args) throws AuthorizationException, TException
     {
         KMeansDrpcClient client = new KMeansDrpcClient();
         client.startSendRequest(args);
@@ -71,8 +74,10 @@ public class KMeansDrpcClient
      * KMeansTopologyに対するDRPCリクエスト送信を開始する。
      * 
      * @param args 起動時引数
+     * @throws TException DRPCリクエスト失敗時
+     * @throws AuthorizationException 認証失敗
      */
-    protected void startSendRequest(String[] args)
+    protected void startSendRequest(String[] args) throws AuthorizationException, TException
     {
         Options cliOptions = createOptions();
         CommandLineParser parser = new PosixParser();
@@ -124,7 +129,7 @@ public class KMeansDrpcClient
         {
             kmeanResult = sendRequest(drpcHost, drpcPort, drpcFunction, kmeansData);
         }
-        catch (TException | DRPCExecutionException | IOException ex)
+        catch (TException | IOException ex)
         {
             // 送信失敗した場合は終了する
             ex.printStackTrace();
@@ -142,14 +147,16 @@ public class KMeansDrpcClient
      * @param drpcFunction 呼び出し機能名称
      * @param kmeansData 投入KMeansデータ
      * @return KMeans結果
-     * @throws DRPCExecutionException DRPCリクエスト失敗時
      * @throws TException DRPCリクエスト失敗時
      * @throws IOException 結果パース失敗時
+     * @throws org.apache.storm.thrift.TException 転送失敗 
+     * @throws AuthorizationException 認証失敗
      */
     public String sendRequest(String drpcHost, int drpcPort, String drpcFunction, String kmeansData)
-            throws TException, DRPCExecutionException, IOException
+            throws TException, IOException, AuthorizationException,
+            org.apache.storm.thrift.TException
     {
-        DRPCClient client = new DRPCClient(drpcHost, drpcPort);
+        DRPCClient client = new DRPCClient(Utils.readStormConfig(), drpcHost, drpcPort);
         String drpcResult = client.execute(drpcFunction, kmeansData);
 
         // 以下のような形式で返るため、パースを行う。

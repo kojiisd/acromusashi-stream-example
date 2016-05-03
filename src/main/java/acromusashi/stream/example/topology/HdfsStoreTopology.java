@@ -12,19 +12,20 @@
 */
 package acromusashi.stream.example.topology;
 
+import org.apache.storm.Config;
+
 import acromusashi.stream.bolt.hdfs.HdfsStoreBolt;
 import acromusashi.stream.component.snmp.converter.SnmpConverter;
 import acromusashi.stream.config.StormConfigGenerator;
 import acromusashi.stream.config.StormConfigUtil;
-import acromusashi.stream.entity.Message;
+import acromusashi.stream.entity.StreamMessage;
 import acromusashi.stream.example.spout.PeriodicalMessageGenSpout;
 import acromusashi.stream.topology.BaseTopology;
-import backtype.storm.Config;
 
 /**
  * HDFS DataStore用のTopologyを起動する。
- * <br/>
- * Topologyの動作フローは下記の通り。<br/>
+ * <br>
+ * Topologyの動作フローは下記の通り。<br>
  * <ol>
  * <li>PeriodicalMessageGenSpoutにてメッセージを生成する</li>
  * <li>HdfsStoreBoltにて設定項目[hdfsstorebolt.～]に設定したHDFSに対してデータを投入する</li>
@@ -54,7 +55,7 @@ public class HdfsStoreTopology extends BaseTopology
     }
 
     /**
-     * プログラムエントリポイント<br/>
+     * プログラムエントリポイント<br>
      * <ul>
      * <li>起動引数:arg[0] 設定値を記述したyamlファイルパス</li>
      * <li>起動引数:arg[1] Stormの起動モード(true:LocalMode、false:DistributeMode)</li>
@@ -67,7 +68,8 @@ public class HdfsStoreTopology extends BaseTopology
         // プログラム引数の不足をチェック
         if (args.length < 2)
         {
-            System.out.println("Usage: java HdfsStoreTopology ConfigPath isExecuteLocal(true|false)");
+            System.out.println(
+                    "Usage: java HdfsStoreTopology ConfigPath isExecuteLocal(true|false)");
             return;
         }
 
@@ -98,10 +100,11 @@ public class HdfsStoreTopology extends BaseTopology
 
         // Add Bolt(PeriodicalMessageGenSpout -> HdfsStoreBolt)
         HdfsStoreBolt bolt = new HdfsStoreBolt();
-        bolt.setConverter(new SnmpConverter());
-        getBuilder().setBolt("HdfsStoreBolt", bolt, hdfsBoltPara).shuffleGrouping("MessageGenSpout");
+//        bolt.setConverter(new SnmpConverter());
+        getBuilder().setBolt("HdfsStoreBolt", bolt, hdfsBoltPara).shuffleGrouping(
+                "MessageGenSpout");
 
         // Regist Serialize Setting.
-        getConfig().registerSerialization(Message.class);
+        getConfig().registerSerialization(StreamMessage.class);
     }
 }

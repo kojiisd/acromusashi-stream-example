@@ -11,6 +11,10 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.storm.task.OutputCollector;
+import org.apache.storm.task.TopologyContext;
+import org.apache.storm.tuple.Fields;
+import org.apache.storm.tuple.Tuple;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,10 +23,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import acromusashi.stream.entity.Message;
-import backtype.storm.task.OutputCollector;
-import backtype.storm.task.TopologyContext;
-import backtype.storm.tuple.Tuple;
+import acromusashi.stream.constants.FieldName;
+import acromusashi.stream.entity.StreamMessage;
 
 /**
  * JsonExtractBoltのテストクラス
@@ -74,7 +76,7 @@ public class JsonExtractBoltTest
     {
         // 準備
         Tuple mockTuple = Mockito.mock(Tuple.class);
-        Message message = new Message();
+        StreamMessage message = new StreamMessage();
         message.setBody("Invalid Message");
         Mockito.doReturn(message).when(mockTuple).getValueByField("message");
 
@@ -99,7 +101,7 @@ public class JsonExtractBoltTest
     {
         // 準備
         Tuple mockTuple = Mockito.mock(Tuple.class);
-        Message message = new Message();
+        StreamMessage message = new StreamMessage();
         message.setBody("{\"key\":\"Test Message\"}");
         Mockito.doReturn(message).when(mockTuple).getValueByField("message");
 
@@ -125,9 +127,12 @@ public class JsonExtractBoltTest
     {
         // 準備
         Tuple mockTuple = Mockito.mock(Tuple.class);
-        Message message = new Message();
+        StreamMessage message = new StreamMessage();
         message.setBody("{\"contents\":\"Test Message\"}");
-        Mockito.doReturn(message).when(mockTuple).getValueByField("message");
+
+        Mockito.doReturn(message).when(mockTuple).getValueByField("messageValue");
+        Mockito.doReturn(true).when(mockTuple).contains(FieldName.MESSAGE_VALUE);
+        Mockito.doReturn(new Fields(FieldName.MESSAGE_VALUE)).when(mockTuple).getFields();
 
         // 実行
         this.target.execute(mockTuple);

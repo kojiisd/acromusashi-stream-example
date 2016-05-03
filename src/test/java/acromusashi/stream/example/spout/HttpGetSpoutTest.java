@@ -15,6 +15,8 @@ import java.util.Map;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.storm.spout.SpoutOutputCollector;
+import org.apache.storm.task.TopologyContext;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,10 +25,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import acromusashi.stream.entity.Header;
-import acromusashi.stream.entity.Message;
-import backtype.storm.spout.SpoutOutputCollector;
-import backtype.storm.task.TopologyContext;
+import acromusashi.stream.entity.StreamMessage;
+import acromusashi.stream.entity.StreamMessageHeader;
 
 /**
  * HttpGetSpoutのテストクラス
@@ -97,10 +97,10 @@ public class HttpGetSpoutTest
         List<Object> argList = argument.getValue();
 
         assertThat(argList.size(), equalTo(1));
-        assertThat(argList.get(0), instanceOf(Message.class));
+        assertThat(argList.get(0), instanceOf(StreamMessage.class));
 
-        Message emitResult = (Message) argList.get(0);
-        Header header = emitResult.getHeader();
+        StreamMessage emitResult = (StreamMessage) argList.get(0);
+        StreamMessageHeader header = emitResult.getHeader();
 
         assertThat(header.getType(), is("http"));
         assertThat(header.getMessageId(), notNullValue());

@@ -21,25 +21,25 @@ import java.util.concurrent.TimeUnit;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.BasicResponseHandler;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.storm.spout.SpoutOutputCollector;
+import org.apache.storm.task.TopologyContext;
+import org.apache.storm.topology.OutputFieldsDeclarer;
+import org.apache.storm.tuple.Fields;
+import org.apache.storm.tuple.Values;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import acromusashi.stream.entity.Header;
-import acromusashi.stream.entity.Message;
-import acromusashi.stream.spout.BaseConfigurationSpout;
-import backtype.storm.spout.SpoutOutputCollector;
-import backtype.storm.task.TopologyContext;
-import backtype.storm.topology.OutputFieldsDeclarer;
-import backtype.storm.tuple.Fields;
-import backtype.storm.tuple.Values;
+import acromusashi.stream.entity.StreamMessage;
+import acromusashi.stream.entity.StreamMessageHeader;
+import acromusashi.stream.spout.AmConfigurationSpout;
 
 /**
  * 一定間隔ごとにHTTPGetを行い、結果を取得して下流に送信するSpout
  *
  * @author kimura
  */
-public class HttpGetSpout extends BaseConfigurationSpout
+public class HttpGetSpout extends AmConfigurationSpout
 {
     /** serialVersionUID */
     private static final long   serialVersionUID = -237111294339742815L;
@@ -81,7 +81,7 @@ public class HttpGetSpout extends BaseConfigurationSpout
     {
         super.open(stormConf, context, collector);
         this.httpget = new HttpGet(this.targetUrl);
-        this.client = new DefaultHttpClient();
+        this.client = HttpClientBuilder.create().build();
     }
 
     /**
@@ -103,12 +103,12 @@ public class HttpGetSpout extends BaseConfigurationSpout
             return;
         }
 
-        Header header = new Header();
+        StreamMessageHeader header = new StreamMessageHeader();
         header.setMessageId(UUID.randomUUID().toString());
         header.setTimestamp(System.currentTimeMillis());
         header.setType("http");
 
-        Message message = new Message();
+        StreamMessage message = new StreamMessage();
         message.setHeader(header);
         message.setBody(response);
 
